@@ -1,0 +1,13 @@
+node_modules
+
+build
+
+dist
+
+.next
+
+.env
+
+cache
+
+artifacts
