@@ -1,6 +1,7 @@
 # HumanDrop
 
-![](./docs/humandrop.png)
+<img src="./docs/humandrop.png" width="200" height="200" />
+
 
 Have you ever wanted to make sure that your airdrop was claimed only by humans?
 
@@ -10,7 +11,7 @@ Humandrop is an opensource toolkit and platform to create human only claimable a
 
 ## How does HumanDrop work?
 
-Users are able to create new contracts that are deployed on Polygon thanks to a contract factory through our [webapp](./humandrop-webapp/README.md).
+Users are able to create new contracts that are deployed on Polygon thanks to a contract factory through our [webapp](./webapp/README.md).
 
 In the contract, the users are able to specify which token they want to airdrop and how much each human can claim from it. 
 
