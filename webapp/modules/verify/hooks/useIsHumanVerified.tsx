@@ -1,6 +1,6 @@
 import { useContractRead } from "wagmi";
 import abi from "../abis/verifier.abi.json";
-import { CONTRACTS } from "../aidrops.constants";
+import { CONTRACTS } from "../../airdrops/aidrops.constants";
 
 type HookResponse = {
   error: Error | null;

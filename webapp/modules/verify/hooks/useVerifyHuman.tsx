@@ -5,14 +5,17 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
-import { CONTRACTS } from "../aidrops.constants";
+import { CONTRACTS } from "../../airdrops/aidrops.constants";
 import { polygon } from "viem/chains";
-import abi from '../abis/airdropFactory.abi.json';
-import { onSettledWrapper } from "./onSettledWrapper";
+import abi from '../../airdrops/abis/airdropFactory.abi.json';
+import { onSettledWrapper } from "../../airdrops/hooks/onSettledWrapper";
 
 // Returns the tx hash
 type HookParams = {
   address: `0x${string}`;
+  root: string,
+  nullifierHash: string,
+  proof: string,
   onError: (error: Error) => void;
   onSuccess: (hash: string) => void;
 };
@@ -21,6 +24,9 @@ export function useVerifyHuman({
   onError,
   onSuccess,
   address,
+  root,
+  nullifierHash,
+  proof,
 }: HookParams): {
   isLoading: boolean;
   error: Error | null;
@@ -36,9 +42,9 @@ export function useVerifyHuman({
     abi,
     chainId,
     functionName: "verifyHuman",
-    args: [address],
+    args: [address, root, nullifierHash, proof],
     cacheTime: 2_000,
-    scopeKey: `${address}-verify`,
+    scopeKey: `${address}-verify-proof`,
   });
 
   const { writeAsync, error, isLoading, data } = useContractWrite({

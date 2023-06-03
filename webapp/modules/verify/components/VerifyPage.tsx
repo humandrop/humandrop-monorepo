@@ -1,5 +1,5 @@
 "use client";
-import { useIsHumanVerified } from "@/modules/airdrops/hooks/useIsHumanVerified";
+import { useIsHumanVerified } from "@/modules/verify/hooks/useIsHumanVerified";
 import { polygon } from "viem/chains";
 import { useAccount, useNetwork } from "wagmi";
 import { VerifyButton } from "./VerifyButton";

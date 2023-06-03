@@ -1,7 +1,7 @@
 import { Airdrop } from "../types/airdrop";
 import { formatUnits } from "viem";
 import { formatAddress } from "@/modules/app/helpers/formatAddress";
-import { useIsHumanVerified } from "../hooks/useIsHumanVerified";
+import { useIsHumanVerified } from "../../verify/hooks/useIsHumanVerified";
 import { useAccount,  useNetwork } from "wagmi";
 import { polygon } from "viem/chains";
 import { useHasClaimed } from "../hooks/useHasClaimed";
