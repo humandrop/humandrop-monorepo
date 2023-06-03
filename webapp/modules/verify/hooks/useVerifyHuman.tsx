@@ -7,8 +7,9 @@ import {
 } from "wagmi";
 import { CONTRACTS } from "../../airdrops/aidrops.constants";
 import { polygon } from "viem/chains";
-import abi from '../../airdrops/abis/airdropFactory.abi.json';
+import abi from '../abis/verifier.abi.json';
 import { onSettledWrapper } from "../../airdrops/hooks/onSettledWrapper";
+import { encodeAbiParameters, parseAbiParameters, decodeAbiParameters } from 'viem'
 
 // Returns the tx hash
 type HookParams = {
@@ -30,11 +31,13 @@ export function useVerifyHuman({
 }: HookParams): {
   isLoading: boolean;
   error: Error | null;
-  execute: () => Promise<`0x${string}` | undefined>;
+  execute: () => Promise<`0x${string}` | undefined | 'not-ready'>;
   retryPrepare: () => void;
 } {
   const { chain } = useNetwork();
   const chainId = (chain?.id || polygon.id) as 80001 | 137;
+  const unpackedProof = proof ?  decodeAbiParameters(parseAbiParameters('uint256[8]'), proof as `0x${string}`)[0] : ''
+
 
 
   const { config: approveConfig, refetch } = usePrepareContractWrite({
@@ -42,7 +45,7 @@ export function useVerifyHuman({
     abi,
     chainId,
     functionName: "verifyAddress",
-    args: [address, root, nullifierHash, proof],
+    args: [address, root, nullifierHash, unpackedProof],
     cacheTime: 2_000,
     scopeKey: `${address}-verify-proof-${root}`,
   });
@@ -66,6 +69,8 @@ export function useVerifyHuman({
       } catch (e) {
         console.log(e);
       }
+    } else {
+      return 'not-ready'
     }
   };
 

@@ -1,8 +1,8 @@
 "use client";
-import { IDKitWidget } from "@worldcoin/idkit";
+import { IDKitWidget, solidityEncode } from "@worldcoin/idkit";
 import { useContractWrite } from "wagmi";
 import { useVerifyHuman } from "../hooks/useVerifyHuman";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import { useIsHumanVerified } from "../hooks/useIsHumanVerified";
 
@@ -47,17 +47,39 @@ export function VerifyButton({
     chainId,
   });
 
+  // Re-execute calls on loop 3 times to ensure the user is verified, if execute returns false, retry
+  const reExecute = async (count: number) => {
+    console.log('RE EXECUTE', result);
+    if (count === 0) return;
+    retryPrepare();
+    const executing = await execute();
+    if (executing === 'not-ready') {
+      setTimeout(() => {
+        reExecute(count - 1);
+      }, 500);
+    }
+  };
+
+  const forceUpdate = useCallback((res: any) => setResult(res), []);
+
+
   return (
     <div>
       {!result && (
         <IDKitWidget
           app_id="app_staging_9bee79db0f712a19d4699cff6b8733f9" // obtain this from developer.worldcoin.org
-          action="1"
+          action={solidityEncode(["string"], ["1"])}
+          signal={solidityEncode(["address"], [address])}
           enableTelemetry
-          onSuccess={(result) => {
-            setResult(result);
-            retryPrepare();
-            execute();
+          handleVerify={(res) => {
+              console.log('EEEEE', res)
+              forceUpdate(res);
+            reExecute(3);
+          }}
+          onSuccess={(res) => {
+              console.log('AAAAAAAAAA', res)
+              forceUpdate(res);
+            reExecute(3);
           }} // pass the proof to the API or your smart contract
         >
           {({ open }) => (
@@ -76,10 +98,15 @@ export function VerifyButton({
         </IDKitWidget>
       )}
 
-      {result && !verified && <button onClick={() => {
-         retryPrepare();
-         execute();
-      }}>Retry</button>}
+      {result && !verified && (
+        <button
+          onClick={() => {
+            reExecute(3);
+          }}
+        >
+          Retry
+        </button>
+      )}
 
       <style jsx>{`
         button {

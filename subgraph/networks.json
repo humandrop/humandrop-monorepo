@@ -1,21 +1,21 @@
 {
   "mumbai": {
     "AirdropFactory": {
-      "address": "0x7e8A8ca46082e74c73428125Fe23885d670E94fb",
+      "address": "0x79C4cfeD4F8ce114E4f0cF8505a0393aC69006d9",
       "startBlock": 36379103
     },
     "Verifier": {
-      "address": "0xFf35245e620d63d8C364f253d8D85eF1E74F6f73",
+      "address": "0xEa390058e26A66eFd22b6E6B6f7f97A559481FBe",
       "startBlock": 36379232
     }
   },
   "polygon": {
     "AirdropFactory": {
-      "address": "0x7e8A8ca46082e74c73428125Fe23885d670E94fb",
+      "address": "0x79C4cfeD4F8ce114E4f0cF8505a0393aC69006d9",
       "startBlock": 36379103
     },
     "Verifier": {
-      "address": "0xFf35245e620d63d8C364f253d8D85eF1E74F6f73",
+      "address": "0xEa390058e26A66eFd22b6E6B6f7f97A559481FBe",
       "startBlock": 36379232
     }
   }

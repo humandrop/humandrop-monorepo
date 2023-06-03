@@ -1,4 +1,7 @@
 "use client";
+
+import { CONTRACTS } from "@/modules/airdrops/aidrops.constants";
+
 export function Footer() {
   return (
     <div>
@@ -12,8 +15,13 @@ export function Footer() {
           <a href="https://github.com/humandrop/humandrop-monorepo">GitHub</a>
         </div>
         <div className="column">
-          <a href="https://mumbai.polygonscan.com/address/0x7e8A8ca46082e74c73428125Fe23885d670E94fb">
+          <a href={`https://mumbai.polygonscan.com/address/${CONTRACTS.airdropFactory[80001]}`}>
             Airdrop Factory (Mumbai)
+          </a>
+        </div>
+        <div className="column">
+          <a href={`https://mumbai.polygonscan.com/address/${CONTRACTS.verifier[80001]}`}>
+            Verifier (Mumbai)
           </a>
         </div>
       </footer>

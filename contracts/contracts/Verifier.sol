@@ -33,7 +33,7 @@ contract Verifier {
 
         worldId.verifyProof(
             root,
-            // 1,
+            1,
             abi.encodePacked(_account).hashToField(),
             nullifierHash,
             externalNullifier,
