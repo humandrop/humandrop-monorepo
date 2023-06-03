@@ -41,10 +41,10 @@ export function useVerifyHuman({
     address: CONTRACTS.verifier[chainId] as `0x${string}`,
     abi,
     chainId,
-    functionName: "verifyHuman",
+    functionName: "verifyAddress",
     args: [address, root, nullifierHash, proof],
     cacheTime: 2_000,
-    scopeKey: `${address}-verify-proof`,
+    scopeKey: `${address}-verify-proof-${root}`,
   });
 
   const { writeAsync, error, isLoading, data } = useContractWrite({

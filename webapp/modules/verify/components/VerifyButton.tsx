@@ -76,7 +76,10 @@ export function VerifyButton({
         </IDKitWidget>
       )}
 
-      {result && !verified && <button onClick={execute}>Retry</button>}
+      {result && !verified && <button onClick={() => {
+         retryPrepare();
+         execute();
+      }}>Retry</button>}
 
       <style jsx>{`
         button {
