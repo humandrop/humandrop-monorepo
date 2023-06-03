@@ -1,3 +1,4 @@
+import { BigInt } from "@graphprotocol/graph-ts"
 import { AirdropCreated as AirdropCreatedEvent } from "../generated/AirdropFactory/AirdropFactory"
 import { Airdrop } from "../generated/schema"
 
@@ -12,10 +13,11 @@ export function handleAirdropCreated(event: AirdropCreatedEvent): void {
   entity.startDate = event.params.startDate
   entity.endDate = event.params.endDate
   entity.maxUsers = event.params.maxUsers
+  entity.totalClaimed = BigInt.fromI32(0);
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
-
+  
   entity.save()
 }

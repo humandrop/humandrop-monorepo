@@ -10,7 +10,7 @@ type Airdrop @entity {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
-  totalClaimend: BigInt!
+  totalClaimed: BigInt!
   claims: [Claim!] @derivedFrom(field: "airdrop")
 }
 

@@ -18,4 +18,12 @@ export function handleClaimed(event: Claimed): void {
 
   // Load the airdrop and add the claim to it
   let airdrop = Airdrop.load(event.address.toHexString())
+
+  if (airdrop) {
+
+    airdrop.totalClaimed = airdrop.totalClaimed.plus(event.params.amount);
+    airdrop.save();
+  }
+
+
 }
