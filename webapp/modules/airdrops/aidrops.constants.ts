@@ -2,7 +2,7 @@ import { polygon, polygonMumbai } from "viem/chains";
 
 export const CONTRACTS = {
     airdropFactory: {
-        [polygonMumbai.id]: '0x8b84f8169cb2429F538475404f758E33BC9EFDCF',
+        [polygonMumbai.id]: '0x7e8A8ca46082e74c73428125Fe23885d670E94fb',
         [polygon.id]: '',
     },
     worldId: {

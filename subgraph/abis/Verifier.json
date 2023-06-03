@@ -1,0 +1,68 @@
+[
+    {
+      "inputs": [
+        { "internalType": "address", "name": "_worldId", "type": "address" },
+        { "internalType": "string", "name": "_appId", "type": "string" },
+        { "internalType": "string", "name": "_actionId", "type": "string" }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_address",
+          "type": "address"
+        }
+      ],
+      "name": "AddressRevoked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_address",
+          "type": "address"
+        }
+      ],
+      "name": "AddressVerified",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "_address", "type": "address" }
+      ],
+      "name": "isVerified",
+      "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "_account", "type": "address" },
+        { "internalType": "uint256", "name": "root", "type": "uint256" },
+        { "internalType": "uint256", "name": "nullifierHash", "type": "uint256" },
+        { "internalType": "uint256[8]", "name": "proof", "type": "uint256[8]" }
+      ],
+      "name": "verifyAddress",
+      "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "worldId",
+      "outputs": [
+        { "internalType": "contract IWorldID", "name": "", "type": "address" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+  

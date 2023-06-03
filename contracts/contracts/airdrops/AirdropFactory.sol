@@ -28,6 +28,7 @@ contract AirdropFactory {
 
     event AirdropCreated(
         uint256 id,
+        address airdropAddress,
         address owner,
         address tokenAddress,
         uint256 amountPerUser,
@@ -62,6 +63,7 @@ contract AirdropFactory {
 
         emit AirdropCreated(
             newAirdropId,
+            address(airdrops[newAirdropId]),
             msg.sender,
             _tokenAddress,
             _amountPerUser,

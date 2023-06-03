@@ -1,0 +1,41 @@
+type Airdrop @entity {
+  id: String!
+  AirdropFactory_id: BigInt! # uint256
+  owner: Bytes! # address
+  tokenAddress: Bytes! # address
+  amountPerUser: BigInt! # uint256
+  startDate: BigInt! # uint256
+  endDate: BigInt! # uint256
+  maxUsers: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  totalClaimend: BigInt!
+  claims: [Claim!] @derivedFrom(field: "airdrop")
+}
+
+type AddressRevoked @entity(immutable: true) {
+  id: Bytes!
+  _address: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type AddressVerified @entity(immutable: true) {
+  id: Bytes!
+  _address: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Claim @entity(immutable: true) {
+  id: Bytes!
+  airdrop: Airdrop! # Airdrop
+  address: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

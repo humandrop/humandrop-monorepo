@@ -1,0 +1,22 @@
+{
+  "mumbai": {
+    "AirdropFactory": {
+      "address": "0x8b84f8169cb2429F538475404f758E33BC9EFDCF",
+      "startBlock": 36379103
+    },
+    "Verifier": {
+      "address": "0xFf35245e620d63d8C364f253d8D85eF1E74F6f73",
+      "startBlock": 36379232
+    }
+  },
+  "polygon": {
+    "AirdropFactory": {
+      "address": "0x8b84f8169cb2429F538475404f758E33BC9EFDCF",
+      "startBlock": 36379103
+    },
+    "Verifier": {
+      "address": "0xFf35245e620d63d8C364f253d8D85eF1E74F6f73",
+      "startBlock": 36379232
+    }
+  }
+}

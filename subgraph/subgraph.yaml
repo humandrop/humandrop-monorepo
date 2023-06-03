@@ -1,0 +1,66 @@
+specVersion: 0.0.4
+repository: https://github.com/makerdao-dux/subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: AirdropFactory
+    network: mumbai
+    source:
+      address: "0x7e8A8ca46082e74c73428125Fe23885d670E94fb"
+      abi: AirdropFactory
+      startBlock: 36379103
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - AirdropCreated
+      abis:
+        - name: AirdropFactory
+          file: ./abis/AirdropFactory.json
+      eventHandlers:
+        - event: AirdropCreated(uint256,address,address,address,uint256,uint256,uint256,uint256)
+          handler: handleAirdropCreated
+      file: ./src/airdrop-factory.ts
+  - kind: ethereum
+    name: Verifier
+    network: mumbai
+    source:
+      address: "0xFf35245e620d63d8C364f253d8D85eF1E74F6f73"
+      abi: Verifier
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - AddressRevoked
+        - AddressVerified
+      abis:
+        - name: Verifier
+          file: ./abis/Verifier.json
+      eventHandlers:
+        - event: AddressRevoked(indexed address)
+          handler: handleAddressRevoked
+        - event: AddressVerified(indexed address)
+          handler: handleAddressVerified
+      file: ./src/verifier.ts
+templates:
+  - kind: ethereum
+    name: Airdrop
+    network: mumbai
+    source:
+      abi: Airdrop
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Airdrop
+      abis:
+        - name: Airdrop
+          file: ./abis/Airdrop.json
+      eventHandlers:
+        - event: Claimed(indexed address,uint256)
+          handler: handleClaimed
+      file: ./src/airdrop.ts

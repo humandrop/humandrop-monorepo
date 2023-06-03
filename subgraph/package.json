@@ -1,0 +1,23 @@
+{
+  "name": "subgraph",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "build:goerli": "graph codegen && graph build --network goerli",
+    "build:mainnet": "graph codegen && graph build --network mainnet",
+    "deploy:goerli": "yarn build:goerli && graph deploy --product hosted-service humandrop/humandrop-mumbai --network goerli",
+    "deploy:mainnet": "yarn build:mainnet && graph deploy --product hosted-service humandrop/subgraph --network mainnet",
+    "create-local": "graph create --node http://localhost:8020/ humandrop/subgraph",
+    "remove-local": "graph remove --node http://localhost:8020/ humandrop/subgraph",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 humandrop/subgraph",
+    "test": "graph test"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.51.0",
+    "@graphprotocol/graph-ts": "0.30.0"
+  },
+  "devDependencies": {
+    "matchstick-as": "0.5.0"
+  }
+}

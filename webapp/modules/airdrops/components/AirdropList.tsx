@@ -7,7 +7,7 @@ export function AirdropList() {
   const airdrops: Airdrop[] = [
     {
       active: true,
-      amount: 10000n,
+      amountPerUser: 10000n,
       contract: "0x123",
       endDate: Date.now() + 1000000,
       startDate: Date.now(),
@@ -17,7 +17,7 @@ export function AirdropList() {
     },
     {
       active: true,
-      amount: 10000n,
+      amountPerUser: 10000n,
       contract: "0x123",
       endDate: Date.now() + 1000000,
       startDate: Date.now(),
