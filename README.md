@@ -1,6 +1,6 @@
 # HumanDrop
 
-<img src="./docs/landing.png" width="auto" height="400" />
+<img src="./docs/landing.png" />
 
 
 Have you ever wanted to make sure that your airdrop was claimed only by humans?
