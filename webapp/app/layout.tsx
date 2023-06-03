@@ -3,6 +3,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Inter } from "next/font/google";
+import { Footer } from "@/modules/app/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <link rel="icon" href="/logo.png" sizes="any" />
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>{children}
+    
+      </body>
     </html>
   );
 }

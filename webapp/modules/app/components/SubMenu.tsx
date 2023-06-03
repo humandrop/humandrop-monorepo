@@ -56,9 +56,8 @@ export default function SubMenu() {
         }
 
         button.active {
-          background: transparent;
+          border: 1px solid rgba(0,0,0,0.3);
           color: black;
-          border: none;
           text-decoration: underline;
         }
       `}</style>

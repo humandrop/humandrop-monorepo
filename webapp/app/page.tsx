@@ -1,3 +1,4 @@
+import { Footer } from "@/modules/app/components/Footer";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -90,6 +91,8 @@ export default function Home() {
 
         
       </div>
+
+      <Footer />
     </main>
   );
 }

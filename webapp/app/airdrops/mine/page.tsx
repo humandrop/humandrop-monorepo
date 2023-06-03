@@ -12,10 +12,7 @@ export default function AirdropPage({ params }: any) {
         setShow(true);
     }, [])
 
-    // Address of the airdrop
-    const address = params.address;
 
-    
   return (show ? 
     <WagmiProvider>
       <ToastContainer />

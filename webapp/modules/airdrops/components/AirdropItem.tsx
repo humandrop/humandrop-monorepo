@@ -4,6 +4,8 @@ import Image from "next/image";
 import { formatUnits } from "viem";
 import { formatAddress } from "@/modules/app/helpers/formatAddress";
 import { useBalance } from "wagmi";
+import { useWithdrawTokens } from "../hooks/useWithdrawTokens";
+import { toast } from "react-toastify";
 
 export function AirdropItem({
   airdrop,
@@ -12,9 +14,22 @@ export function AirdropItem({
   airdrop: Airdrop;
   chainId: number;
 }) {
-  const { data: balance } = useBalance({
+  const { data: balance, refetch } = useBalance({
     address: airdrop.contract as `0x${string}`,
     token: airdrop.token.address[chainId] as any,
+  });
+
+  const { execute: withdraw, isLoading: isLoadingApprove } = useWithdrawTokens({
+    airdrop,
+    chainId,
+
+    onSuccess: () => {
+      toast.success("Tokens withdrawn");
+      refetch();
+    },
+    onError: () => {
+      toast("Tokens withdrawn");
+    },
   });
 
   return (
@@ -43,8 +58,16 @@ export function AirdropItem({
       </div>
 
       {!!balance && (
-        <div className="remaining">
-          Remaining for claim: {balance.formatted} {airdrop.token.symbol}
+        <div>
+          <div className="remaining">
+            Remaining for claim: {balance.formatted} {airdrop.token.symbol}
+          </div>
+
+          <div className="withdraw-wrapper">
+          <button className="withdraw-button" onClick={withdraw}>
+            Withdraw all tokens
+          </button>
+          </div>
         </div>
       )}
 
@@ -83,6 +106,21 @@ export function AirdropItem({
           margin-top: 15px;
           font-weight: bold;
           font-size: 17px;
+        }
+
+        .withdraw-wrapper {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .withdraw-button {
+          background: rgba(255, 255, 255, 0.1);
+          color: white;
+          border: 1px solid white;
+          border-radius: 8px;
+          padding: 8px;
         }
       `}</style>
     </div>

@@ -1,13 +1,11 @@
-import { toast } from "react-toastify";
 import {
   useContractWrite,
   useNetwork,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
-import { CONTRACTS } from "../aidrops.constants";
 import { polygon } from "viem/chains";
-import abi from "../abis/airdropFactory.abi.json";
+import abi from "../abis/airdrop.abi.json";
 import { Airdrop } from "../types/airdrop";
 import { onSettledWrapper } from "./onSettledWrapper";
 
@@ -19,7 +17,11 @@ type HookParams = {
   chainId: number;
 };
 
-export function useCreateAirdrop({ onError, onSuccess, airdrop }: HookParams): {
+export function useWithdrawTokens({
+  onError,
+  onSuccess,
+  airdrop,
+}: HookParams): {
   isLoading: boolean;
   error: Error | null;
   execute: () => Promise<`0x${string}` | undefined>;
@@ -28,26 +30,14 @@ export function useCreateAirdrop({ onError, onSuccess, airdrop }: HookParams): {
   const { chain } = useNetwork();
   const chainId = (chain?.id || polygon.id) as 80001 | 137;
 
-  // Create airdrop params
-  const tokenAddress = airdrop.token.address[chainId];
-  const amountPerUser = airdrop.amountPerUser;
-  const contractArgs = [
-    tokenAddress,
-    amountPerUser,
-    airdrop.maxUsers,
-    Math.floor(airdrop.startDate / 1000),
-    Math.floor(airdrop.endDate / 1000),
-  ];
-
   const { config: approveConfig, refetch } = usePrepareContractWrite({
-    address: CONTRACTS.airdropFactory[chainId] as `0x${string}`,
+    address: airdrop.contract as `0x${string}`,
     abi,
     chainId,
-    functionName: "createAirdrop",
-    args: contractArgs,
-
+    functionName: "withdraw",
+    args: [airdrop.token.address[chainId]],
     cacheTime: 2_000,
-    scopeKey: `${airdrop.token.address[chainId]}-create`,
+    scopeKey: `${airdrop.token.address[chainId]}-withdraw`,
   });
 
   const { writeAsync, error, isLoading, data } = useContractWrite({

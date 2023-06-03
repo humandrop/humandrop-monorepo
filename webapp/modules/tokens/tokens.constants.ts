@@ -5,7 +5,7 @@ export const TOKENS: { [key: string]: Token } = {
   matic: {
     address: {
       [polygon.id]: "0x0000000000000000000000000000000000001010",
-      [polygonMumbai.id]: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
+      [polygonMumbai.id]: "0x82D3853a59602a44435166a6eeA50a230EeA4b51",
     },
 
     decimals: 18,
@@ -18,7 +18,7 @@ export const TOKENS: { [key: string]: Token } = {
   dai: {
     address: {
       [polygon.id]: "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
-      [polygonMumbai.id]: "0xe84d601e5d945031129a83e5602be0cc7f182cf3",
+      [polygonMumbai.id]: "0x2394FC1280A28c4fdc46e70dfddCb20CA2671b3C",
     },
 
     decimals: 18,
@@ -31,7 +31,7 @@ export const TOKENS: { [key: string]: Token } = {
   eth: {
     address: {
       [polygon.id]: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-      [polygonMumbai.id]: "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa",
+      [polygonMumbai.id]: "0x327Cc18B467D09738D03c10676FC9b3f4Be51673",
     },
 
     decimals: 18,
