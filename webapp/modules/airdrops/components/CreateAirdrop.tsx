@@ -62,12 +62,16 @@ export function CreateAirdrop() {
   });
 
   // Create
-  const { execute: create, isLoading: isLoadingCreate, retryPrepare } = useCreateAirdrop({
+  const {
+    execute: create,
+    isLoading: isLoadingCreate,
+    retryPrepare,
+  } = useCreateAirdrop({
     airdrop,
     onSuccess: () => {
       toast.success("Airdrop created");
       mutateAllowance();
-      router.push(`/airdrops/mine`)
+      router.push(`/airdrops/mine`);
     },
     onError: () => {
       toast("Airdrop creation failed");
@@ -91,8 +95,6 @@ export function CreateAirdrop() {
       mutateAllowance();
     },
   });
-
-  
 
   return (
     <div className="wrapper">
@@ -130,30 +132,45 @@ export function CreateAirdrop() {
           {!address && <ConnectButton />}
           {address && (!allowance || allowance < totalAmount) && (
             <div>
-                <button onClick={approve} className="bg-transparent hover:bg-blue-500 text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded">
-              Approve {formatUnits(totalAmount, airdrop.token.decimals)} {airdrop.token.symbol}
-            </button>
-            <div>
-            <a href={`https://polygonscan.com/address/${CONTRACTS.airdropFactory[chainId as 137]}`}>Contract Address</a>
-            </div>
+              <button
+                onClick={approve}
+                className="bg-transparent hover:bg-blue-500 text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded"
+              >
+                Approve {formatUnits(totalAmount, airdrop.token.decimals)}{" "}
+                {airdrop.token.symbol}
+              </button>
+              <div>
+                <a
+                  href={`https://mumbai.polygonscan.com/address/${
+                    CONTRACTS.airdropFactory[chainId as 137]
+                  }`}
+                >
+                  Contract Address
+                </a>
+              </div>
             </div>
           )}
           {address && !!allowance && allowance >= totalAmount && (
-            <button className="bg-transparent hover:bg-blue-500 text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded" onClick={create}>Create Airdrop!</button>
+            <button
+              className="bg-transparent hover:bg-blue-500 text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded"
+              onClick={create}
+            >
+              Create Airdrop!
+            </button>
           )}
         </div>
       </div>
       <div className="preview">
         <div className="preview-content">
-        <h2 className="text-4xl font-extrabold text-white mb-4">
-          Preview Claim
-        </h2>
-        <ClaimCard airdrop={airdrop} />
+          <h2 className="text-4xl font-extrabold text-white mb-4">
+            Preview Claim
+          </h2>
+          <ClaimCard airdrop={airdrop} />
 
-        <h2 className="text-4xl font-extrabold text-white mb-4">
-          Preview Airdrop
-        </h2>
-        <AirdropItem airdrop={airdrop} chainId={chainId}/>
+          <h2 className="text-4xl font-extrabold text-white mb-4">
+            Preview Airdrop
+          </h2>
+          <AirdropItem airdrop={airdrop} chainId={chainId} />
         </div>
       </div>
       <style jsx>{`
@@ -177,8 +194,8 @@ export function CreateAirdrop() {
         }
 
         .preview .preview-content {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 15px;
         }
 
         .form-row {
@@ -206,21 +223,20 @@ export function CreateAirdrop() {
         }
 
         .actions {
-            margin-top: 30px;
-            margin-bottom: 30px;
+          margin-top: 30px;
+          margin-bottom: 30px;
         }
 
         button {
-            padding: 8px;
-            border-radius: 8px;
-            border: 1px solid white;
-            color: white;
-            cursor: pointer;
-            margin-bottom: 15px;
+          padding: 8px;
+          border-radius: 8px;
+          border: 1px solid white;
+          color: white;
+          cursor: pointer;
+          margin-bottom: 15px;
         }
 
         button:hover {
-           
         }
       `}</style>
     </div>

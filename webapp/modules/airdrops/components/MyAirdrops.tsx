@@ -19,9 +19,9 @@ export function MyAirdrops() {
       {!address && <ConnectButton />}
       {address && (
         <div>
-          {!data && isLoading && <div>Loading...</div>}
+          {!data && isLoading && <div  className="empty">Loading...</div>}
           <div className="airdrop-list">
-            {data && data.length === 0 && <div>No airdrops found</div>}
+            {data && data.length === 0 && <div className="empty">No airdrops found. Please wait some minutes while your Airdrops are indexed.</div>}
 
             {data &&
               data.length > 0 &&
@@ -44,6 +44,12 @@ export function MyAirdrops() {
           padding-right: 30px;
           padding-bottom: 30px;
         }
+
+        .empty {
+            color: white;
+            font-weight: bold;
+        }
+        
         h2 {
           font-size: 20px;
           font-weight: bold;

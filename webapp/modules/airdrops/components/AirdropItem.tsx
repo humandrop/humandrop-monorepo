@@ -87,6 +87,8 @@ export function AirdropItem({
           padding-right: 60px;
           padding-top: 30px;
           padding-bottom: 30px;
+          box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
         }
 
         .token-name {
