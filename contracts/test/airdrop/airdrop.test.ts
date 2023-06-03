@@ -7,200 +7,194 @@ import { ethers } from "hardhat";
 import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { generateMerkle } from "./merkle";
 
-
 // Contracts used in the tests
-let airdrop: Contract; let manager: Contract;
-let bound: Contract;
-let ruby: Contract;
-let magicContract: Contract;
+let airdropFactory: Contract;
+let verifier: Contract;
+let testERC20: Contract;
 
 let owner: SignerWithAddress;
-let magicSigner: SignerWithAddress;
-let userWithMagic: SignerWithAddress;
-let userWithoutMagic: SignerWithAddress;
 let otherUser: SignerWithAddress;
-let merkle: any;
-let rootHash : string;
-let balancesAirdrop: any;
+let airdropOwner: SignerWithAddress;
 
 describe("Airdrop", function () {
-    before(async () => {
-        [owner, magicSigner, userWithMagic, userWithoutMagic, otherUser] =
-            await ethers.getSigners();
+  before(async () => {
+    [owner, airdropOwner, otherUser] = await ethers.getSigners();
 
-        // Deploy the manager contract
-        const Manager = await ethers.getContractFactory("Manager");
-        manager = await Manager.deploy();
+    // Deploy the verifier contract
+    const Verifier = await ethers.getContractFactory("VerifierMock");
+    verifier = await Verifier.deploy();
 
-        // Add the owner as an admin and manager
-        await manager.addAdmin(await owner.getAddress());
-        await manager.addManager(await owner.getAddress(), 0);
-        await manager.addManager(await owner.getAddress(), 1);
-        await manager.addManager(await owner.getAddress(), 2);
-        await manager.addManager(await owner.getAddress(), 3);
+    // Verify the owner
+    await verifier.verifyAddress(await owner.getAddress(), "2", "1111");
+  });
 
-        //  Deploy the Bound contract
-        const Bound = await ethers.getContractFactory("ERC20Bound");
-        bound = await Bound.deploy(manager.address);
-        await bound.deployed();
+  beforeEach(async () => {
+    // Deploy the Airdrop Factory contract
+    const AirdropFactory = await ethers.getContractFactory("AirdropFactory");
+    airdropFactory = await AirdropFactory.deploy(verifier.address);
+    await airdropFactory.deployed();
 
+    // Deploy the TestERC20 contract
+    const TestERC20 = await ethers.getContractFactory("TestERC20");
+    testERC20 = await TestERC20.connect(owner).deploy();
+    await testERC20.deployed();
 
-    });
+    // Mint 10000 tokens for the airdrop owner
+    await testERC20
+      .connect(owner)
+      .mint(parseEther("10000"), await airdropOwner.getAddress());
+  });
 
+  it("Should revert if the user did not give allowance to spend the erc20", async () => {
+    const totalAirdropAmount = parseEther("10000");
+    const tokenAddress = testERC20.address;
+    const amountPerUser = parseEther("100");
+    const maxUsers = 100;
+    const endDate = Math.floor(Date.now() / 1000) + 3600 * 24; // One day from now
+    const startDate = Date.now();
 
-    beforeEach(async () => {
-        // Deploy the Ruby contract
-        const Ruby = await ethers.getContractFactory("Ruby");
-        ruby = await Ruby.deploy(manager.address, bound.address, parseEther('21000000000'));
-        await ruby.deployed();
+    // Approve the aidropFactory to spend the ERC20 tokens
 
-        // Deploy the test ERC20 and ERC721 contracts
-        const TestERC20 = await ethers.getContractFactory("TestERC20");
-        const testERC20 = await TestERC20.connect(magicSigner).deploy();
-        magicContract = await testERC20.deployed();
+    // Create a new competition
+    const createAirdropTx = airdropFactory
+      .connect(airdropOwner)
+      .createAirdrop(tokenAddress, amountPerUser, maxUsers, startDate, endDate);
 
-        
-        // Deploy the airdrop contract
-        const Airdrop = await ethers.getContractFactory("Airdrop");
-        airdrop = (await Airdrop.deploy(
-            manager.address,
-            ruby.address,
-            magicContract.address,
-            true,
-            parseEther('5')
-        ));
+    expect(createAirdropTx).to.be.revertedWith("ERC20: insufficient allowance");
+  });
 
-        await airdrop.deployed();
+  it("should allow to create a new airdrop", async () => {
+    const totalAirdropAmount = parseEther("10000");
+    const tokenAddress = testERC20.address;
+    const amountPerUser = parseEther("100");
+    const maxUsers = 100;
+    const endDate = Math.floor(Date.now() / 1000) + 3600 * 24; // One day from now
+    const startDate = Date.now();
 
-        console.log('Airdrop address: ', airdrop.address);
+    // Approve the aidropFactory to spend the ERC20 tokens
+    testERC20
+      .connect(airdropOwner)
+      .approve(airdropFactory.address, totalAirdropAmount);
 
-        // Add the airdrop contract the ability to mint tokens
-        await manager.addManager(airdrop.address, 2);
+    // Create a new competition
+    const createAirdropTx = await airdropFactory
+      .connect(airdropOwner)
+      .createAirdrop(tokenAddress, amountPerUser, maxUsers, startDate, endDate);
 
-        console.log('Manager address: ', manager.address);
+    const airdropResponse = await createAirdropTx.wait();
+    const airdropId = airdropResponse.events?.[0].args?.[0];
 
-        // Mint 1000 tokens to the user with magic
-        await magicContract.connect(magicSigner).mint(parseEther('1000'), await userWithMagic.getAddress());
+    const airdropAddress = await airdropFactory.airdrops(airdropId);
+    const AirdropItem = await ethers.getContractFactory("Airdrop");
 
-        console.log('Tokens minted to user with magic');
+    const airdrop = new ethers.Contract(
+      airdropAddress,
+      AirdropItem.interface,
+      owner
+    );
 
-        // Generate the merkle root with 100 RUBY tokens for the userWithMagic and userWithoutMagic
-        balancesAirdrop = {
-            [await userWithMagic.getAddress()]: parseEther('100'),
-            [await userWithoutMagic.getAddress()]: parseEther('100')
-        }
+    // Check competition parameters
+    expect(await airdrop.owner()).to.equal(await airdropOwner.getAddress());
+    expect(await airdrop.token()).to.equal(testERC20.address);
+    expect(await airdrop.endDate()).to.equal(endDate);
+    expect(await airdrop.startDate()).to.equal(startDate);
+    expect(await airdrop.maxUsers()).to.equal(maxUsers);
+    expect(await airdrop.amountPerUser()).to.equal(amountPerUser);
 
-        merkle = generateMerkle(balancesAirdrop);
-        rootHash = merkle.getRoot();
-        console.log('Root hash: ', rootHash);
+    // The balance of the airdrop contract should be the one specified
+    expect(await testERC20.balanceOf(airdropAddress)).to.equal(
+      totalAirdropAmount
+    );
+  });
 
-        // Set the merkle root
-        //await airdrop.setRootHash(rootHash);
+  it("should reject if the human is not verified", async () => {
+    const totalAirdropAmount = parseEther("10000");
+    const tokenAddress = testERC20.address;
+    const amountPerUser = parseEther("100");
+    const maxUsers = 100;
+    const endDate = Math.floor(Date.now() / 1000) + 3600 * 24; // One day from now
+    const startDate = Date.now();
 
+    // Approve the aidropFactory to spend the ERC20 tokens
+    testERC20
+      .connect(airdropOwner)
+      .approve(airdropFactory.address, totalAirdropAmount);
 
-    });
+    // Create a new competition
+    const createAirdropTx = await airdropFactory
+      .connect(airdropOwner)
+      .createAirdrop(tokenAddress, amountPerUser, maxUsers, startDate, endDate);
 
-    it('should not allow redemption before root hash is set', async () => {
-        const merkleProof = merkle.getHexProof(`${0}${await userWithMagic.getAddress()}${parseEther('100').toString()}`);
-        await expect(airdrop.redeem(0, await userWithMagic.getAddress(), parseEther('100'), merkleProof)).to.be.revertedWith('Root hash not set');
-    });
+    const airdropResponse = await createAirdropTx.wait();
+    const airdropId = airdropResponse.events?.[0].args?.[0];
 
-    it('should allow the manager to redeem tokens', async () => {
-        await airdrop.connect(owner).setRootHash(rootHash);
-        const leaf = ethers.utils.solidityKeccak256(['uint256', 'address', 'uint256'], [0, await userWithMagic.getAddress(), parseEther('100').toString()]);
+    const airdropAddress = await airdropFactory.airdrops(airdropId);
+    const AirdropItem = await ethers.getContractFactory("Airdrop");
 
-        const merkleProof = merkle.getHexProof(leaf);
-        console.log('Merkle proof: ', merkleProof);
+    const airdrop = new ethers.Contract(
+      airdropAddress,
+      AirdropItem.interface,
+      otherUser
+    );
 
-        await airdrop.redeem(0, await userWithMagic.getAddress(), parseEther('100'), merkleProof);
+    // Log the balance of the airdrop contract
+    console.log("Airdrop balance", await testERC20.balanceOf(airdropAddress));
 
-        expect(await airdrop.balanceOf(await userWithMagic.getAddress())).to.equal(parseEther('100'));
-        expect(await airdrop.totalSupply()).to.equal(parseEther('100'));
+    // Should be rejected
+    await expect(airdrop.connect(otherUser).claim()).to.be.revertedWith(
+      "Not verified"
+    );
+  });
 
-        // Check ruby balance of user with magic
-        expect(await ruby.balanceOf(await userWithMagic.getAddress())).to.equal(parseEther('100'));
-    });
+  
+  it('should allow to claim if verified', async () => {
+    const totalAirdropAmount = parseEther("10000");
+    const tokenAddress = testERC20.address;
+    const amountPerUser = parseEther("100");
+    const maxUsers = 100;
+    const endDate = Math.floor(Date.now() / 1000) + 3600 * 24; // One day from now
+    const startDate = Math.floor(Date.now() / 1000);
+    // Approve the aidropFactory to spend the ERC20 tokens
+    testERC20
+      .connect(airdropOwner)
+      .approve(airdropFactory.address, totalAirdropAmount);
 
-    it('should fail to redeem more tokens than allowed', async () => {
-        await airdrop.connect(owner).setRootHash(rootHash);
-        const leaf = ethers.utils.solidityKeccak256(['uint256', 'address', 'uint256'], [0, await userWithMagic.getAddress(), parseEther('100').toString()]);
+    // Create a new competition
+    const createAirdropTx = await airdropFactory
+      .connect(airdropOwner)
+      .createAirdrop(tokenAddress, amountPerUser, maxUsers, startDate, endDate);
 
-        const merkleProof = merkle.getHexProof(leaf);
-        console.log('Merkle proof: ', merkleProof);
+    const airdropResponse = await createAirdropTx.wait();
+    const airdropId = airdropResponse.events?.[0].args?.[0];
 
-        await expect(airdrop.redeem(0, await userWithMagic.getAddress(), parseEther('101'), merkleProof)).to.be.revertedWith('Invalid proof');
-    })
+    const airdropAddress = await airdropFactory.airdrops(airdropId);
+    const AirdropItem = await ethers.getContractFactory("Airdrop");
 
-    it('should fail to redeem less tokens than allowed if leaf is wrong', async () => {
-        await airdrop.connect(owner).setRootHash(rootHash);
-        const leaf = ethers.utils.solidityKeccak256(['uint256', 'address', 'uint256'], [0, await userWithMagic.getAddress(), parseEther('50').toString()]);
+    const airdrop = new ethers.Contract(
+      airdropAddress,
+      AirdropItem.interface,
+      otherUser
+    );
 
-        const merkleProof = merkle.getHexProof(leaf);
-        console.log('Merkle proof: ', merkleProof);
+    // Verify the user
+    await verifier.connect(otherUser).verifyAddress(otherUser.address, '', '');
 
-        await expect(airdrop.redeem(0, await userWithMagic.getAddress(), parseEther('50'), merkleProof)).to.be.revertedWith('Invalid proof');
-    })
+    // log the balance of the contract
+    console.log('Airdrop balance', await testERC20.balanceOf(airdropAddress));
 
-    it('should fail if contract is paused', async () => {
-        await airdrop.connect(owner).setRootHash(rootHash);
-        const leaf = ethers.utils.solidityKeccak256(['uint256', 'address', 'uint256'], [0, await userWithMagic.getAddress(), parseEther('100').toString()]);
-        const merkleProof = merkle.getHexProof(leaf);
-        console.log('Merkle proof: ', merkleProof);
+    // Claim the tokens
+    await airdrop.connect(otherUser).claim();
 
-        await airdrop.connect(owner).pause();
+    console.log('Claimed')
 
-        await expect(airdrop.redeem(0, await userWithMagic.getAddress(), parseEther('100'), merkleProof)).to.be.revertedWith('Pausable: paused');
-    })
+    // The user should have received the tokens
+    expect(await testERC20.balanceOf(otherUser.address)).to.equal(amountPerUser);
 
-    it('Should not allow to redem for free once the free flag is turned off', async() => {
-        await airdrop.connect(owner).setRootHash(rootHash);
-        const leaf = ethers.utils.solidityKeccak256(['uint256', 'address', 'uint256'], [0, await userWithMagic.getAddress(), parseEther('100').toString()]);
-        const merkleProof = merkle.getHexProof(leaf);
-        console.log('Merkle proof: ', merkleProof);
+    // The contract should display that the user claimed
+    expect(await airdrop.hasClaimed(otherUser.address)).to.equal(true);
 
-        await airdrop.connect(owner).setFree(false);
-
-        await expect(airdrop.redeem(0, await userWithMagic.getAddress(), parseEther('100'), merkleProof)).to.be.revertedWith('Airdrop is not free right now');
-    })
-
-    it('should allow to mint by paying Magic', async () => {
-        await airdrop.connect(owner).setRootHash(rootHash);
-        const leaf = ethers.utils.solidityKeccak256(['uint256', 'address', 'uint256'], [0, await userWithMagic.getAddress(), parseEther('100').toString()]);
-        const merkleProof = merkle.getHexProof(leaf);
-        console.log('Merkle proof: ', merkleProof);
-
-        await airdrop.connect(owner).setFree(false);
-
-       
-        // Approve the airdrop contract to spend the magic
-        await magicContract.connect(userWithMagic).approve(airdrop.address, parseEther('10'));
-
-        await airdrop.connect(userWithMagic).redeemForMagic(0, await userWithMagic.getAddress(), parseEther('100'), merkleProof, parseEther('10'));
-
-
-        expect(await airdrop.balanceOf(await userWithMagic.getAddress())).to.equal(parseEther('100'));
-        expect(await airdrop.totalSupply()).to.equal(parseEther('100'));
-
-        // Check ruby balance of user with magic
-        expect(await ruby.balanceOf(await userWithMagic.getAddress())).to.equal(parseEther('100'));
-
-        // Check magic balance of user with magic
-        expect(await magicContract.balanceOf(await userWithMagic.getAddress())).to.equal(parseEther('990'));
-
-        // Check magic balance of the airdrop contract
-        console.log('Airdrop magic balance: ', await magicContract.balanceOf(airdrop.address));
-        expect(await magicContract.balanceOf(airdrop.address)).to.equal(parseEther('10'));
-
-        // Allows manager to withdraw magic
-        await airdrop.connect(owner).withdrawMagic(parseEther('10'));
-
-        // Check magic balance of the airdrop contract
-        expect(await magicContract.balanceOf(airdrop.address)).to.equal(parseEther('0'));
-
-        console.log('Owner magic balance: ', await magicContract.balanceOf(await owner.getAddress()));
-        // Check magic balance of the owner
-        expect(await magicContract.balanceOf(await owner.getAddress())).to.equal(parseEther('10'));
-
-    })
+    // The total claims should have been incremented by one
+    expect(await airdrop.totalClaims()).to.equal(1);
+  })
 
 });

@@ -1,19 +1,23 @@
 pragma solidity ^0.8.0;
-
-interface IWorldcoin {
-    function verifyMerkleRoot(
-        bytes32 merkleRoot,
-        bytes32 leaf,
-        address account
-    ) external returns (bool);
-}
+import "./interfaces/IWorldId.sol";
+import {ByteHasher} from "./lib/ByteHasher.sol";
 
 contract Verifier {
-    IWorldcoin public worldcoin;
-    mapping(address => bool) private verified;
+    using ByteHasher for bytes;
 
-    constructor(address _worldcoin) {
-        worldcoin = IWorldcoin(_worldcoin);
+    IWorldID public worldId;
+    mapping(address => bool) private verified;
+    uint256 internal immutable externalNullifier;
+
+    constructor(
+        address _worldId,
+        string memory _appId,
+        string memory _actionId
+    ) {
+        worldId = IWorldID(_worldId);
+        externalNullifier = abi
+            .encodePacked(abi.encodePacked(_appId).hashToField(), _actionId)
+            .hashToField();
     }
 
     event AddressVerified(address indexed _address);
@@ -21,19 +25,25 @@ contract Verifier {
 
     function verifyAddress(
         address _account,
-        bytes32 _merkleRoot,
-        bytes32 _leaf
+        uint256 root,
+        uint256 nullifierHash,
+        uint256[8] calldata proof
     ) external returns (bool) {
         require(!verified[_account], "Already verified");
 
-        if (worldcoin.verifyMerkleRoot(_merkleRoot, _leaf, _account)) {
-            verified[_account] = true;
-            emit AddressVerified(_account);
+        worldId.verifyProof(
+            root,
+            // 1,
+            abi.encodePacked(_account).hashToField(),
+            nullifierHash,
+            externalNullifier,
+            proof
+        );
 
-            return true;
-        }
+        verified[_account] = true;
+        emit AddressVerified(_account);
 
-        return false;
+        return true;
     }
 
     function isVerified(address _address) external view returns (bool) {

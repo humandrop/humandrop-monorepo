@@ -1,17 +1,24 @@
 import { ethers } from "hardhat";
 
 async function main() {
+  const POLYGON_MUMBAIN_CHAINID = 80001;
+  const POLYGON_CHAINID = 137;
 
   // Deploy the Manager contract
   const AirdropFactory = await ethers.getContractFactory("AirdropFactory");
-  const restrictedUser = '';
-  const treasury = '';
-  const airdropFactory = await AirdropFactory.deploy(restrictedUser, treasury);
-
-  await airdropFactory.deployed();
 
   const network = await ethers.provider.getNetwork();
-  const networkName = (network.name == 'unknown' ? 'localhost' : network.name);
+  const networkName = network.name == "unknown" ? "localhost" : network.name;
+
+
+  const verifierAddress =
+    network.chainId === POLYGON_MUMBAIN_CHAINID
+      ? "0xFf35245e620d63d8C364f253d8D85eF1E74F6f73"
+      : "0";
+
+  const airdropFactory = await AirdropFactory.deploy(verifierAddress);
+
+  await airdropFactory.deployed();
 
   console.log(`Network: ${networkName} (chainId=${network.chainId})`);
   console.log("Contract deployed to:", airdropFactory.address);
@@ -19,10 +26,10 @@ async function main() {
   if (networkName != "localhost") {
     console.log("");
     console.log("To verify this contract on Etherscan, try:");
-    console.log(`npx hardhat verify --network ${networkName} ${airdropFactory.address} ${restrictedUser} ${treasury}`);
+    console.log(
+      `npx hardhat verify --network ${networkName} ${airdropFactory.address} ${verifierAddress}`
+    );
   }
-
-
 }
 
 // We recommend this pattern to be able to use async/await everywhere

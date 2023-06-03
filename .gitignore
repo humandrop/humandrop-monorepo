@@ -11,3 +11,9 @@ dist
 cache
 
 artifacts
+
+.env*
+
+typechain-types
+
+*Zone.Identifier

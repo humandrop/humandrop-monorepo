@@ -6,6 +6,15 @@ Currently HumanDrop consists of:
 - Verifier: Stores all the addresses that are human.
 - AidropFactory: Allows to create new Airdrops that track the amount of claims and holds the tokens being airdroped. 
 
+## Deployed contracts:
+
+- Verifier
+  - Testnet: https://mumbai.polygonscan.com/address/0xFf35245e620d63d8C364f253d8D85eF1E74F6f73#code
+  - Mainnet:
+- AirdropFactory
+    - Testnet: https://mumbai.polygonscan.com/address/0x8b84f8169cb2429F538475404f758E33BC9EFDCF#code
+    - Mainnet
+
 ## Installation
 
 ```
@@ -22,6 +31,13 @@ yarn test
 
 Optional: Deploy mock token contracts
 ```shell
-npx hardhat run scripts/airdrops/deploy-airdrop-factory.ts --network polygon
-npx hardhat run scripts/deploy-verifier.ts --network polygon
+npx hardhat run scripts/airdrops/00-deploy-verifier.ts --network polygonMumbai
+npx hardhat run scripts/airdrops/01-deploy-airdrop-factory.ts --network polygonMumbai
+```
+
+## Deploy on mainnet
+
+```shell
+npx hardhat run scripts/airdrops/00-deploy-verifier.ts --network polygon
+npx hardhat run scripts/airdrops/01-deploy-airdrop-factory.ts --network polygon
 ```

@@ -38,11 +38,11 @@ const config: HardhatUserConfig = {
       initialBaseFeePerGas: 0, // workaround from https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136 . Remove when that issue is closed.
     },
     polygon: {
-      url: `https://polygon.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: [ process.env.WALLET_PRIVATE_KEY_TESTNET as string],
     },
-    polygontestnet: {
-      url: `https://arb-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+    polygonMumbai: {
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: [ process.env.WALLET_PRIVATE_KEY_MAINNET as string],
     },
   },
@@ -52,6 +52,16 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
+    customChains: [
+      {
+        network: "polygonMumbai",
+        chainId: 80001,
+        urls: {
+          apiURL: "https://api-testnet.polygonscan.com/api",
+          browserURL: "https://mumbai.polygonscan.com"
+        }
+      }
+    ]
   },
 };
 
