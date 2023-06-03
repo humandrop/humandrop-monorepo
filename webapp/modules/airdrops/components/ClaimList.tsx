@@ -1,30 +1,29 @@
 import { polygon } from "viem/chains";
-import { Airdrop } from "../types/airdrop";
-import { TOKENS } from "@/modules/tokens/tokens.constants";
-import { ClaimCard } from "./ClaimCard";
-import { ChainDisconnectedError } from "viem";
 import { useNetwork } from "wagmi";
-import { useAirdropList } from "../hooks/history/useAirdropsList";
+import { useClaimHistory } from "../hooks/history/useClaimHistory";
+import { ClaimHistoryItem } from "./ClaimHistoryItem";
 
-export function AirdropList() {
+export function ClaimList() {
   const { chain } = useNetwork();
-  const { data, isLoading } = useAirdropList(chain ? chain.id : polygon.id);
+  const chainId = chain ? chain.id : polygon.id;
+  const { data, isLoading } = useClaimHistory(chainId);
+
   return (
     <div className="wrapper">
-      <h2>Airdrops</h2>
+      <h2>Claims</h2>
       {!data && isLoading && <div className="empty">Loading...</div>}
       <div className="airdrop-list">
-        {data && data.length === 0 && <div className="empty">No airdrops found</div>}
+        {data && data.length === 0 && <div className="empty">No claims found</div>}
 
         {data &&
           data.length > 0 &&
-          data.map((airdrop, index) => {
+          data.map((claim, index) => {
             return (
               <div
-                key={`airdrop-${airdrop.contract}-${index}`}
-                className="airdrop rounded"
+                key={`claim-${claim.address}-${index}`}
+                className="airdrop"
               >
-                <ClaimCard airdrop={airdrop} />
+                <ClaimHistoryItem claim={claim} chainId={chainId} />
               </div>
             );
           })}
@@ -36,12 +35,10 @@ export function AirdropList() {
           padding-right: 30px;
           padding-bottom: 30px;
         }
-
         .empty {
             color: white;
             font-weight: bold;
         }
-        
         h2 {
           font-size: 20px;
           font-weight: bold;
@@ -49,7 +46,9 @@ export function AirdropList() {
           color: white;
         }
         .airdrop {
-          padding: 15px;
+          border-bottom: 1px solid white;
+          flex: 1;
+          width: 100%;
         }
 
         .airdrop-list {
@@ -57,6 +56,9 @@ export function AirdropList() {
           justify-content: center;
           align-items: center;
           flex-wrap: wrap;
+          flex-direction: column;
+          max-width: 600px;
+          margin: 0 auto;
         }
       `}</style>
     </div>

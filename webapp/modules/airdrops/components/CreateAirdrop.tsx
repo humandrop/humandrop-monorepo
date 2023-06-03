@@ -184,6 +184,17 @@ export function CreateAirdrop() {
           padding: 30px;
         }
 
+        @media (max-width: 768px) {
+          .wrapper {
+            flex-direction: column;
+          }
+
+          .form,
+          .preview {
+            width: 100%;
+          }
+        }
+
         .preview-content {
           display: flex;
           flex-direction: column;
