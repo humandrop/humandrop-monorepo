@@ -3,7 +3,7 @@ import { Airdrop } from "../generated/schema"
 
 export function handleAirdropCreated(event: AirdropCreatedEvent): void {
   let entity = new Airdrop(
-    event.params.airdropAddress
+    event.params.airdropAddress.toHexString()
   )
   entity.AirdropFactory_id = event.params.id
   entity.owner = event.params.owner

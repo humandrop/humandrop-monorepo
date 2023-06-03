@@ -15,16 +15,14 @@ type Airdrop @entity {
 }
 
 type AddressRevoked @entity(immutable: true) {
-  id: Bytes!
-  _address: Bytes! # address
+  id: String!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
 type AddressVerified @entity(immutable: true) {
-  id: Bytes!
-  _address: Bytes! # address
+  id: String!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

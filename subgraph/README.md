@@ -13,13 +13,11 @@
 If it's your first time, you must auth `graph auth --product hosted-service CODE`
 
 To deploy:
-`graph deploy --product hosted-service humandrop/subgraph --network <mainnet | goerli>`
+`graph deploy --product hosted-service rafinskipg/humandrop-mumbai --network mumbai`
 
 To deploy:
-`graph deploy --product hosted-service humandrop/subgraph-goerli --network <mainnet | goerli>`
+`graph deploy --product hosted-service rafinskipg/humandrop-polygon polygon`
 
 ## Deployment URLs
 
-[https://thegraph.com/hosted-service/subgraph/humandrop/subgraph](https://thegraph.com/hosted-service/subgraph/humandrop/subgraph)
-
-[https://thegraph.com/hosted-service/subgraph/humandrop/subgraph-goerli](https://thegraph.com/hosted-service/subgraph/humandrop/subgraph-goerli)
+https://thegraph.com/hosted-service/subgraph/rafinskipg/humandrop-mumbai

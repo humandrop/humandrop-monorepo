@@ -1,7 +1,7 @@
 {
   "mumbai": {
     "AirdropFactory": {
-      "address": "0x8b84f8169cb2429F538475404f758E33BC9EFDCF",
+      "address": "0x7e8A8ca46082e74c73428125Fe23885d670E94fb",
       "startBlock": 36379103
     },
     "Verifier": {
@@ -11,7 +11,7 @@
   },
   "polygon": {
     "AirdropFactory": {
-      "address": "0x8b84f8169cb2429F538475404f758E33BC9EFDCF",
+      "address": "0x7e8A8ca46082e74c73428125Fe23885d670E94fb",
       "startBlock": 36379103
     },
     "Verifier": {

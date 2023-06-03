@@ -4,10 +4,10 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "build:goerli": "graph codegen && graph build --network goerli",
+    "build:mumbai": "graph codegen && graph build --network mumbai",
     "build:mainnet": "graph codegen && graph build --network mainnet",
-    "deploy:goerli": "yarn build:goerli && graph deploy --product hosted-service humandrop/humandrop-mumbai --network goerli",
-    "deploy:mainnet": "yarn build:mainnet && graph deploy --product hosted-service humandrop/subgraph --network mainnet",
+    "deploy:mumbai": "yarn build:mumbai && graph deploy --product hosted-service rafinskipg/humandrop-mumbai --network mumbai",
+    "deploy:mainnet": "yarn build:mainnet && graph deploy --product hosted-service humandrop/subgraph --network polygon",
     "create-local": "graph create --node http://localhost:8020/ humandrop/subgraph",
     "remove-local": "graph remove --node http://localhost:8020/ humandrop/subgraph",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 humandrop/subgraph",
