@@ -40,7 +40,6 @@ export function useVerifyHuman({
     nullifierHash: string,
     proof: string
   ) => Promise<`0x${string}` | undefined | "not-ready">;
-  retryPrepare: () => void;
 } {
   const { chain } = useNetwork();
   const chainId = (chain?.id || polygon.id) as 80001 | 137;
