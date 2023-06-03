@@ -7,16 +7,20 @@ import {
 } from "wagmi";
 import { CONTRACTS } from "../../airdrops/aidrops.constants";
 import { polygon } from "viem/chains";
-import abi from '../abis/verifier.abi.json';
+import abi from "../abis/verifier.abi.json";
 import { onSettledWrapper } from "../../airdrops/hooks/onSettledWrapper";
-import { encodeAbiParameters, parseAbiParameters, decodeAbiParameters } from 'viem'
+import {
+  encodeAbiParameters,
+  parseAbiParameters,
+  decodeAbiParameters,
+} from "viem";
 
 // Returns the tx hash
 type HookParams = {
   address: `0x${string}`;
-  root: string,
-  nullifierHash: string,
-  proof: string,
+  root: string;
+  nullifierHash: string;
+  proof: string;
   onError: (error: Error) => void;
   onSuccess: (hash: string) => void;
 };
@@ -31,27 +35,37 @@ export function useVerifyHuman({
 }: HookParams): {
   isLoading: boolean;
   error: Error | null;
-  execute: () => Promise<`0x${string}` | undefined | 'not-ready'>;
+  execute: (
+    root: string,
+    nullifierHash: string,
+    proof: string
+  ) => Promise<`0x${string}` | undefined | "not-ready">;
   retryPrepare: () => void;
 } {
   const { chain } = useNetwork();
   const chainId = (chain?.id || polygon.id) as 80001 | 137;
-  const unpackedProof = proof ?  decodeAbiParameters(parseAbiParameters('uint256[8]'), proof as `0x${string}`)[0] : ''
+  const unpackedProof = proof
+    ? decodeAbiParameters(
+        parseAbiParameters("uint256[8]"),
+        proof as `0x${string}`
+      )[0]
+    : "";
 
+  // const { config: approveConfig, refetch } = usePrepareContractWrite({
+  //   address: CONTRACTS.verifier[chainId] as `0x${string}`,
+  //   abi,
+  //   chainId,
+  //   functionName: "verifyAddress",
 
+  //   args: [address, root, nullifierHash, unpackedProof],
+  //  scopeKey: `${address}-verify-proof-${root}-${nullifierHash}`,
+  // });
 
-  const { config: approveConfig, refetch } = usePrepareContractWrite({
+  const { writeAsync, write, error, isLoading, data } = useContractWrite({
     address: CONTRACTS.verifier[chainId] as `0x${string}`,
     abi,
     chainId,
     functionName: "verifyAddress",
-    args: [address, root, nullifierHash, unpackedProof],
-    cacheTime: 2_000,
-    scopeKey: `${address}-verify-proof-${root}`,
-  });
-
-  const { writeAsync, error, isLoading, data } = useContractWrite({
-    ...approveConfig,
     onError,
   });
 
@@ -60,17 +74,29 @@ export function useVerifyHuman({
     onSettled: onSettledWrapper(onSuccess, onError),
   });
 
-  const execute = async () => {
-    
+  const execute = async (
+    root: string,
+    nullifierHash: string,
+    proof: string
+  ) => {
     if (writeAsync) {
       try {
-        const result = await writeAsync();
+        const unpackedProof = proof
+          ? decodeAbiParameters(
+              parseAbiParameters("uint256[8]"),
+              proof as `0x${string}`
+            )[0]
+          : "";
+
+        const result = await writeAsync({
+          args: [address, root, nullifierHash, unpackedProof],
+        });
         return result.hash;
       } catch (e) {
         console.log(e);
       }
     } else {
-      return 'not-ready'
+      return "not-ready";
     }
   };
 
@@ -78,6 +104,5 @@ export function useVerifyHuman({
     isLoading: isLoading || isApproveProcessing,
     error,
     execute,
-    retryPrepare: refetch,
   };
 }

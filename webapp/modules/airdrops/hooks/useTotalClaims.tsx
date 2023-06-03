@@ -6,7 +6,7 @@ type HookResponse = {
   error: Error | null;
   isLoading: boolean;
   mutate: () => void;
-  data: boolean | undefined;
+  data: number | undefined;
 };
 
 export function useTotalClaims({
@@ -25,8 +25,9 @@ export function useTotalClaims({
     scopeKey: `total-claims-${airdrop.contract}`,
   });
 
+
   return {
-    data: data as any,
+    data: data ? Number(data) : undefined,
     isLoading: isLoading,
     error,
     mutate: refetch

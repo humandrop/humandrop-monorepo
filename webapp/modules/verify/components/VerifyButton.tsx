@@ -2,9 +2,16 @@
 import { IDKitWidget, solidityEncode } from "@worldcoin/idkit";
 import { useContractWrite } from "wagmi";
 import { useVerifyHuman } from "../hooks/useVerifyHuman";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useIsHumanVerified } from "../hooks/useIsHumanVerified";
+
+type VerificationResult = {
+  credential_type: string;
+  merkle_root: string;
+  nullifier_hash: string;
+  proof: string;
+};
 
 export function VerifyButton({
   address,
@@ -20,14 +27,9 @@ export function VerifyButton({
     proof,
   }: any) => void;
 }) {
-  const [result, setResult] = useState<{
-    credential_type: string;
-    merkle_root: string;
-    nullifier_hash: string;
-    proof: string;
-  } | null>(null);
+  const [result, setResult] = useState<VerificationResult | null>(null);
 
-  const { execute, retryPrepare } = useVerifyHuman({
+  const { execute } = useVerifyHuman({
     address,
     nullifierHash: result?.nullifier_hash || "",
     proof: result?.proof || "",
@@ -48,20 +50,21 @@ export function VerifyButton({
   });
 
   // Re-execute calls on loop 3 times to ensure the user is verified, if execute returns false, retry
-  const reExecute = async (count: number) => {
-    console.log('RE EXECUTE', result);
+  const reExecute = async (count: number, res: VerificationResult) => {
+    console.log("RE EXECUTE", result);
     if (count === 0) return;
-    retryPrepare();
-    const executing = await execute();
-    if (executing === 'not-ready') {
+    
+    const executing = await execute(
+      res.merkle_root,
+      res.nullifier_hash,
+      res.proof
+    );
+    if (executing === "not-ready") {
       setTimeout(() => {
-        reExecute(count - 1);
+        reExecute(count - 1, res);
       }, 500);
     }
   };
-
-  const forceUpdate = useCallback((res: any) => setResult(res), []);
-
 
   return (
     <div>
@@ -72,14 +75,14 @@ export function VerifyButton({
           signal={solidityEncode(["address"], [address])}
           enableTelemetry
           handleVerify={(res) => {
-              console.log('EEEEE', res)
-              forceUpdate(res);
-            reExecute(3);
+            console.log("EEEEE", res);
+            setResult(res);
+            reExecute(3, res);
           }}
           onSuccess={(res) => {
-              console.log('AAAAAAAAAA', res)
-              forceUpdate(res);
-            reExecute(3);
+            console.log("AAAAAAAAAA", res);
+            setResult(res);
+            reExecute(3, res);
           }} // pass the proof to the API or your smart contract
         >
           {({ open }) => (
@@ -101,7 +104,7 @@ export function VerifyButton({
       {result && !verified && (
         <button
           onClick={() => {
-            reExecute(3);
+            reExecute(3, result);
           }}
         >
           Retry

@@ -7,6 +7,8 @@ import { polygon } from "viem/chains";
 import { useHasClaimed } from "../hooks/useHasClaimed";
 import { VerifyButton } from "@/modules/verify/components/VerifyButton";
 import { useTotalClaims } from "../hooks/useTotalClaims";
+import { useClaimAirdrop } from "../hooks/useClaimAirdrop";
+import { toast } from "react-toastify";
 
 export function ClaimCard({ airdrop }: { airdrop: Airdrop }) {
 
@@ -25,9 +27,22 @@ export function ClaimCard({ airdrop }: { airdrop: Airdrop }) {
     airdrop
   });
 
-  const { data: totalClaims } = useTotalClaims({
+  const { data: totalClaims, mutate: mutateTotalClaims } = useTotalClaims({
     chainId,
     airdrop
+  })
+
+  const { execute: claim } = useClaimAirdrop({
+    chainId,
+    airdrop,
+    onError: () => {
+      toast.error("Failed to claim airdrop");
+    },
+    onSuccess: () => {
+      toast.success("Airdrop claimed");
+      mutateClaimed();
+      mutateTotalClaims();
+    }
   })
 
   return (
@@ -45,7 +60,7 @@ export function ClaimCard({ airdrop }: { airdrop: Airdrop }) {
 
       <div className="claim-area">
         {address && verified && !claimed && (
-          <button>
+          <button onClick={claim} className="claim-button">
             Claim
           </button>
         )}
@@ -120,6 +135,15 @@ export function ClaimCard({ airdrop }: { airdrop: Airdrop }) {
         .claim-area {
           margin-top: 30px;
           margin-bottom: 30px;
+        }
+
+        .claim-button {
+          padding: 8px;
+          border-radius: 8px;
+          border: 1px solid white;
+          color: white;
+          padding-left: 16px;
+          padding-right: 16px;
         }
       `}</style>
     </div>
