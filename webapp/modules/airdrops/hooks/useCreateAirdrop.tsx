@@ -7,7 +7,7 @@ import {
 } from "wagmi";
 import { CONTRACTS } from "../aidrops.constants";
 import { polygon } from "viem/chains";
-import abi from '../abis/airdropFactory.abi.json';
+import abi from "../abis/airdropFactory.abi.json";
 import { Airdrop } from "../types/airdrop";
 import { onSettledWrapper } from "./onSettledWrapper";
 
@@ -19,11 +19,7 @@ type HookParams = {
   chainId: number;
 };
 
-export function useCreateAirdrop({
-  onError,
-  onSuccess,
-  airdrop,
-}: HookParams): {
+export function useCreateAirdrop({ onError, onSuccess, airdrop }: HookParams): {
   isLoading: boolean;
   error: Error | null;
   execute: () => Promise<`0x${string}` | undefined>;
@@ -35,10 +31,13 @@ export function useCreateAirdrop({
   // Create airdrop params
   const tokenAddress = airdrop.token.address[chainId];
   const amountPerUser = airdrop.amountPerUser;
-    const contractArgs = [tokenAddress, amountPerUser, airdrop.maxUsers, Math.floor(airdrop.startDate / 1000), Math.floor(airdrop.endDate / 1000)];
-
-    console.log(contractArgs);
-  
+  const contractArgs = [
+    tokenAddress,
+    amountPerUser,
+    airdrop.maxUsers,
+    Math.floor(airdrop.startDate / 1000),
+    Math.floor(airdrop.endDate / 1000),
+  ];
 
   const { config: approveConfig, refetch } = usePrepareContractWrite({
     address: CONTRACTS.airdropFactory[chainId] as `0x${string}`,
@@ -46,7 +45,7 @@ export function useCreateAirdrop({
     chainId,
     functionName: "createAirdrop",
     args: contractArgs,
-  
+
     cacheTime: 2_000,
     scopeKey: `${airdrop.token}-create`,
   });
@@ -62,7 +61,6 @@ export function useCreateAirdrop({
   });
 
   const execute = async () => {
-   
     if (writeAsync) {
       try {
         const result = await writeAsync();

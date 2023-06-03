@@ -49,18 +49,13 @@ export function useApproveToken({
     onError,
   });
 
+
   const { isLoading: isApproveProcessing } = useWaitForTransaction({
     hash: data?.hash,
     onSettled: onSettledWrapper(onSuccess, onError),
   });
 
   const execute = async () => {
-    if (chain && chain.id !== chainId) {
-      toast.error(
-        "Please switch to the correct network to approve this token."
-      );
-      return;
-    }
     if (writeAsync) {
       try {
         const result = await writeAsync();

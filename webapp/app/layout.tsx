@@ -1,5 +1,6 @@
 import "./globals.css";
 import '@rainbow-me/rainbowkit/styles.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Inter } from "next/font/google";
 
@@ -18,7 +19,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <link rel="icon" href="/logo.png" sizes="any" />
-
       <body className={inter.className}>{children}</body>
     </html>
   );

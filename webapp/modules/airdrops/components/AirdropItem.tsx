@@ -3,8 +3,20 @@ import { Airdrop } from "../types/airdrop";
 import Image from "next/image";
 import { formatUnits } from "viem";
 import { formatAddress } from "@/modules/app/helpers/formatAddress";
+import { useBalance } from "wagmi";
 
-export function AirdropItem({ airdrop }: { airdrop: Airdrop }) {
+export function AirdropItem({
+  airdrop,
+  chainId,
+}: {
+  airdrop: Airdrop;
+  chainId: number;
+}) {
+  const { data: balance } = useBalance({
+    address: airdrop.contract as `0x${string}`,
+    token: airdrop.token.address[chainId] as any,
+  });
+
   return (
     <div className="rounded card">
       <div className="flex items-center justify-between token-name">
@@ -14,12 +26,11 @@ export function AirdropItem({ airdrop }: { airdrop: Airdrop }) {
         <Image src={airdrop.token.logoURI} width={50} height={50} alt="logo" />
       </div>
       <div className="claim-info">
-        
         {formatUnits(
-          airdrop.amountPerUser * BigInt(airdrop.maxUsers),
+          airdrop.amountPerUser * BigInt(airdrop.maxUsers || 0),
           airdrop.token.decimals
         )}{" "}
-        {airdrop.token.symbol} available
+        {airdrop.token.symbol} Airdrop
       </div>
 
       <div className="amount-per-user">
@@ -31,20 +42,11 @@ export function AirdropItem({ airdrop }: { airdrop: Airdrop }) {
         <b>{airdrop.maxUsers} humans</b> can claim this airdrop
       </div>
 
-      <div className="contract-info">
-        <div className="deployer">
-          Deployed by{" "}
-          <a href={`https://polygonscan.com/address/${airdrop.owner}`}>
-            {formatAddress(airdrop.owner)}
-          </a>
+      {!!balance && (
+        <div className="remaining">
+          Remaining for claim: {balance.formatted} {airdrop.token.symbol}
         </div>
-        <div className="contract-address">
-          Contract address:{" "}
-          <a href={`https://polygonscan.com/address/${airdrop.contract}`}>
-            {formatAddress(airdrop.contract)}
-          </a>
-        </div>
-      </div>
+      )}
 
       <style jsx>{`
         .card {
@@ -78,9 +80,9 @@ export function AirdropItem({ airdrop }: { airdrop: Airdrop }) {
         }
 
         .claim-info {
-            margin-top: 15px;
-            font-weight: bold;
-            font-size: 17px;
+          margin-top: 15px;
+          font-weight: bold;
+          font-size: 17px;
         }
       `}</style>
     </div>

@@ -15,11 +15,13 @@ import { useApproveToken } from "../hooks/useApproveToken";
 import { toast } from "react-toastify";
 import { useCreateAirdrop } from "../hooks/useCreateAirdrop";
 import { formatAddress } from "@/modules/app/helpers/formatAddress";
+import { useRouter } from "next/navigation";
 
 export function CreateAirdrop() {
   const { chain } = useNetwork();
   const { address } = useAccount();
   const chainId = chain?.id || polygon.id;
+  const router = useRouter();
 
   const emptyAirdrop: Airdrop = {
     active: true,
@@ -46,7 +48,7 @@ export function CreateAirdrop() {
   };
 
   const onMaxUsersChange = (maxUsers: number) => {
-    setAirdrop({ ...airdrop, maxUsers });
+    setAirdrop({ ...airdrop, maxUsers: maxUsers || 0 });
   };
 
   const totalAmount = airdrop.amountPerUser * BigInt(airdrop.maxUsers);
@@ -65,6 +67,7 @@ export function CreateAirdrop() {
     onSuccess: () => {
       toast.success("Airdrop created");
       mutateAllowance();
+      router.push(`/airdrops/mine`)
     },
     onError: () => {
       toast("Airdrop creation failed");
@@ -150,7 +153,7 @@ export function CreateAirdrop() {
         <h2 className="text-4xl font-extrabold text-white mb-4">
           Preview Airdrop
         </h2>
-        <AirdropItem airdrop={airdrop} />
+        <AirdropItem airdrop={airdrop} chainId={chainId}/>
         </div>
       </div>
       <style jsx>{`

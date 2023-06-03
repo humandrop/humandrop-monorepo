@@ -34,6 +34,15 @@ export default function SubMenu() {
             Verify Personhood
           </button>
         </Link>
+        <Link href="/airdrops/mine">
+          <button
+            className={`ml-3 hover:bg-blue-500 font-semibold hover:text-white py-2 px-4 border hover:border-transparent rounded ${
+              pathname === "/airdrops/mine" ? "active" : "bg-transparent"
+            } `}
+          >
+            My airdrops
+          </button>
+        </Link>
       </div>
       <style jsx>{`
         .wrapper {

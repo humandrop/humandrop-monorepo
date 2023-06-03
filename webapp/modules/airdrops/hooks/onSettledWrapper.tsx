@@ -7,6 +7,8 @@ export function onSettledWrapper(
   onError: (err: Error, hash: string) => void
 ) {
   return function (data?: TransactionReceipt, error?: Error | null) {
+    console.log('Settled', data, error)
+    
     if (data) {
       if (data.status === 'reverted') {
         onError && onError(new Error('Transaction reverted.'), data.transactionHash);
