@@ -49,25 +49,8 @@ export function VerifyButton({
     chainId,
   });
 
-  // Re-execute calls on loop 3 times to ensure the user is verified, if execute returns false, retry
-  const reExecute = async (count: number, res: VerificationResult) => {
-    console.log("RE EXECUTE", result);
-    if (count === 0) return;
-    
-    const executing = await execute(
-      res.merkle_root,
-      res.nullifier_hash,
-      res.proof
-    );
-    if (executing === "not-ready") {
-      setTimeout(() => {
-        reExecute(count - 1, res);
-      }, 500);
-    }
-  };
-
   return (
-    <div>
+    <div className="wrapper">
       {!result && (
         <IDKitWidget
           app_id="app_staging_9bee79db0f712a19d4699cff6b8733f9" // obtain this from developer.worldcoin.org
@@ -75,14 +58,12 @@ export function VerifyButton({
           signal={solidityEncode(["address"], [address])}
           enableTelemetry
           handleVerify={(res) => {
-            console.log("EEEEE", res);
             setResult(res);
-            reExecute(3, res);
+            execute(res.merkle_root, res.nullifier_hash, res.proof);
           }}
           onSuccess={(res) => {
-            console.log("AAAAAAAAAA", res);
             setResult(res);
-            reExecute(3, res);
+            execute(res.merkle_root, res.nullifier_hash, res.proof);
           }} // pass the proof to the API or your smart contract
         >
           {({ open }) => (
@@ -102,16 +83,38 @@ export function VerifyButton({
       )}
 
       {result && !verified && (
-        <button
-          onClick={() => {
-            reExecute(3, result);
-          }}
-        >
-          Retry
-        </button>
+        <div className="wrapper">
+          <p className="text">
+            We are now verifying your identity on-chain. Please wait...
+          </p>
+          <button
+            onClick={() => {
+              execute(result.merkle_root, result.nullifier_hash, result.proof);
+            }}
+          >
+            Retry on-chain request
+          </button>
+          <div className="restart">
+            <button onClick={() => setResult(null)}>
+              Restart WorldId verification
+            </button>
+          </div>
+        </div>
       )}
 
       <style jsx>{`
+        .wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .text {
+          color: white;
+          margin-bottom: 15px;
+        }
+
         button {
           padding: 8px;
           border-radius: 8px;
@@ -128,6 +131,10 @@ export function VerifyButton({
 
         img {
           margin-right: 10px;
+        }
+
+        .restart {
+          margin-top: 15px;
         }
       `}</style>
     </div>
