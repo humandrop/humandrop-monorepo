@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { TOKENS } from "../tokens.constants";
 import { TokenCard } from "./TokenCard";
 import { Token } from "../types/token";
@@ -16,6 +16,8 @@ export function TokenSelector({
     return Object.values(TOKENS).filter((token) => !!token.address[chainId]);
   }, [chainId]);
 
+  const [customToken, setCustomToken] = useState('');
+
   return (
     <div className="wrapper">
       {availableTokens.map((token) => {
@@ -31,6 +33,24 @@ export function TokenSelector({
           </div>
         );
       })}
+      <div
+            className={`item ${
+              selected === customToken ? "selected" : ""
+            }`}
+            onClick={onSelectCustom}
+          >
+            <TokenCard token={{
+              address: {
+                [chainId]: customToken
+              },
+              colorEnd: 'white',
+              colorStart: 'black',
+              logoURI: '/unknown.png',
+              decimals: 18,
+              name: 'Unknown',
+              symbol: 'Unknown'
+            }} />
+          </div>
       <style jsx>{`
         .wrapper {
           display: flex;
