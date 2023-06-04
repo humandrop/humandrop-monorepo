@@ -36,7 +36,7 @@ export default function Home() {
           />
         </div>
         <p className="mt-16 flex w-full justify-center border-b border-gray-300  lg:static w-auto  rounded-xl border bg-gray-200 p-4 lg:dark:bg-zinc-800/30">
-          Airdrop any ERC20 token to verified humans only! powered by&nbsp;
+          Airdrop ERC20 tokens to verified humans only! powered by&nbsp;
           <code className="font-mono font-bold">WorldId</code>
         </p>
       </div>
