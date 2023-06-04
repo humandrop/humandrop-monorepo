@@ -24,6 +24,16 @@ export function Footer() {
             Verifier (Mumbai)
           </a>
         </div>
+        <div className="column">
+          <a href={`https://polygonscan.com/address/${CONTRACTS.airdropFactory[137]}`}>
+            Airdrop Factory (Polygon)
+          </a>
+        </div>
+        <div className="column">
+          <a href={`https://polygonscan.com/address/${CONTRACTS.verifier[137]}`}>
+            Verifier (Polygon)
+          </a>
+        </div>
       </footer>
 
       <style jsx>{`
@@ -33,6 +43,7 @@ export function Footer() {
           align-items: center;
           padding: 20px;
           margin-top: 30px;
+          flex-wrap: wrap;
         }
 
         .column { 

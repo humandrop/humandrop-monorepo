@@ -5,6 +5,7 @@ import { useVerifyHuman } from "../hooks/useVerifyHuman";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useIsHumanVerified } from "../hooks/useIsHumanVerified";
+import { polygonMumbai } from "viem/chains";
 
 type VerificationResult = {
   credential_type: string;
@@ -49,11 +50,13 @@ export function VerifyButton({
     chainId,
   });
 
+  const appId = chainId === polygonMumbai.id ? "app_staging_9bee79db0f712a19d4699cff6b8733f9": "app_2f5a1758a2236a9264b6cb0cdbfb2a34"
+
   return (
     <div className="wrapper">
       {!result && (
         <IDKitWidget
-          app_id="app_staging_9bee79db0f712a19d4699cff6b8733f9" // obtain this from developer.worldcoin.org
+          app_id={appId} // obtain this from developer.worldcoin.org
           action={solidityEncode(["string"], ["1"])}
           signal={solidityEncode(["address"], [address])}
           enableTelemetry

@@ -14,7 +14,7 @@ async function main() {
   const verifierAddress =
     network.chainId === POLYGON_MUMBAIN_CHAINID
       ? "0xEa390058e26A66eFd22b6E6B6f7f97A559481FBe"
-      : "0";
+      : "0xFf35245e620d63d8C364f253d8D85eF1E74F6f73";
 
   const airdropFactory = await AirdropFactory.deploy(verifierAddress);
 

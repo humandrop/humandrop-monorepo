@@ -16,8 +16,10 @@ To deploy:
 `graph deploy --product hosted-service rafinskipg/humandrop-mumbai --network mumbai`
 
 To deploy:
-`graph deploy --product hosted-service rafinskipg/humandrop-polygon polygon`
+`graph deploy --product hosted-service rafinskipg/humandrop-polygon --network matic`
 
 ## Deployment URLs
 
 https://thegraph.com/hosted-service/subgraph/rafinskipg/humandrop-mumbai
+
+https://thegraph.com/hosted-service/subgraph/rafinskipg/humandrop-polygon

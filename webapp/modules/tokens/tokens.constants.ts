@@ -4,14 +4,14 @@ import { Token } from "./types/token";
 export const TOKENS: { [key: string]: Token } = {
   matic: {
     address: {
-      [polygon.id]: "0x0000000000000000000000000000000000001010",
+      [polygon.id]: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
       [polygonMumbai.id]: "0x82D3853a59602a44435166a6eeA50a230EeA4b51",
     },
 
     decimals: 18,
-    logoURI: "/tokens/matic-logo.webp",
-    name: "Matic",
-    symbol: "MATIC",
+    logoURI: "/tokens/wmatic.png",
+    name: "WMatic",
+    symbol: "WMATIC",
     colorStart: "#7c3fe3",
     colorEnd: "#9232d2",
   },
@@ -43,7 +43,7 @@ export const TOKENS: { [key: string]: Token } = {
   },
   humandrop: {
     address: {
-      [polygon.id]: "0x7245BFBAc32be8C8b214a63909F94Cc8889f9Ee7",
+      [polygon.id]: "0x7bDaEfd387A56B0243Ea1d1e3b61cc6576924e5b",
       [polygonMumbai.id]: "0x7245bfbac32be8c8b214a63909f94cc8889f9ee7",
     },
 

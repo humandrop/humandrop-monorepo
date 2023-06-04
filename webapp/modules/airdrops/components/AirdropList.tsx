@@ -1,14 +1,12 @@
 import { polygon } from "viem/chains";
-import { Airdrop } from "../types/airdrop";
-import { TOKENS } from "@/modules/tokens/tokens.constants";
 import { ClaimCard } from "./ClaimCard";
-import { ChainDisconnectedError } from "viem";
 import { useNetwork } from "wagmi";
 import { useAirdropList } from "../hooks/history/useAirdropsList";
 
 export function AirdropList() {
   const { chain } = useNetwork();
-  const { data, isLoading } = useAirdropList(chain ? chain.id : polygon.id);
+  const chainId = chain ? chain.id : polygon.id;
+  const { data, isLoading } = useAirdropList(chainId);
   return (
     <div className="wrapper">
       <h2>Airdrops</h2>
@@ -28,7 +26,7 @@ export function AirdropList() {
               </div>
             );
           })}
-      </div>
+      </div>  
 
       <style jsx>{`
         .wrapper {
@@ -41,7 +39,7 @@ export function AirdropList() {
             color: white;
             font-weight: bold;
         }
-        
+
         h2 {
           font-size: 20px;
           font-weight: bold;
