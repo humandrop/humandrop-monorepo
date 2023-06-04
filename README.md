@@ -31,7 +31,7 @@ Some projects may want to airdrop specified quantities of tokens to each individ
 
 ### Using HumanDrop Verifier
 
-HumanDrop verifier is deployed on Polygon at 0x000, to interact with it you can just simply call "isVerified" on the Verifier contract.
+HumanDrop verifier is deployed on Polygon at https://polygonscan.com/address/0xFf35245e620d63d8C364f253d8D85eF1E74F6f73, to interact with it you can just simply call "isVerified" on the Verifier contract.
 
 
 ```
