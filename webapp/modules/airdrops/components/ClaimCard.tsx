@@ -58,6 +58,20 @@ export function ClaimCard({ airdrop }: { airdrop: Airdrop }) {
         Claim {formatUnits(airdrop.amountPerUser, airdrop.token.decimals)} {airdrop.token.symbol}
       </div>
 
+      <div className="claim-subinfo">
+        {formatUnits(
+          airdrop.amountPerUser * BigInt(airdrop.maxUsers || 0),
+          airdrop.token.decimals
+        )}{" "}
+        {airdrop.token.symbol} Airdrop
+      </div>
+
+      <div className="amount-per-user">
+        {formatUnits(airdrop.amountPerUser, airdrop.token.decimals)}{" "}
+        {airdrop.token.symbol} per person
+      </div>
+
+
       <div className="claim-area">
         {address && verified && !claimed && (
           <button onClick={claim} className="claim-button">
@@ -117,6 +131,10 @@ export function ClaimCard({ airdrop }: { airdrop: Airdrop }) {
         .claim-info {
           margin-top: 15px;
           font-weight: bold;
+        }
+
+        .claim-subinfo, .amount-per-user {
+          font-size: 9px;
         }
 
         .token-name {

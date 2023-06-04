@@ -113,6 +113,7 @@ export function CreateAirdrop() {
           <input
             type="number"
             id="amount"
+            step={0.00001}
             value={formatUnits(airdrop.amountPerUser, airdrop.token.decimals)}
             onChange={(e) => onAmountChange(e.target.value)}
           />

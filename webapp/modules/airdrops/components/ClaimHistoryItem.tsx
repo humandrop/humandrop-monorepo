@@ -12,11 +12,15 @@ export function ClaimHistoryItem({
 }) {
   return (
     <div className="wrapper">
+      <div className="icon">
+        <img src={claim.airdrop.token.logoURI} width={50} height={50} />
+      </div>
       <div className="address">{formatAddress(claim.address)}</div>
       <div className="amount">
         {formatUnits(claim.amount, claim.airdrop.token.decimals)}{" "}
         {claim.airdrop.token.symbol}
       </div>
+
       <div className="transaction">
         <a
           href={`${getEtherScanLink(chainId)}/tx/${claim.transactionHash}`}

@@ -38,7 +38,7 @@ export function AirdropItem({
         {airdrop.token.name}
       </div>
       <div className="flex items-center justify-between">
-        <Image src={airdrop.token.logoURI} width={50} height={50} alt="logo" />
+        <img src={airdrop.token.logoURI} width={50} height={50} alt="logo" />
       </div>
       <div className="claim-info">
         {formatUnits(
